@@ -3,18 +3,22 @@ package com.example.demo.service.product;
 import com.example.demo.exceptions.ProductNotFoundException;
 import com.example.demo.model.Category;
 import com.example.demo.model.Product;
+import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.request.AddProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 //@RequiredArgsConstructor will only pick up variables that are non-static final
 @Service
 @RequiredArgsConstructor //Lombok annotation required for constructor injection
 public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;//ProductRepository being used as a dependency
+    private final CategoryRepository categoryRepository;
     //but if you hover below the above dependency you will see that
     //the productRepo dependency never got assigned.
     //this means that the dependency never got injected.
@@ -26,8 +30,22 @@ public class ProductService implements IProductService {
         //check if the category is found in database
         //if yes, set it as the new product category
         //if not, save it as a new category and set it as new product category
-        Category category
-        return null;
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+                .orElseGet(() -> {
+                    Category newCategory = new Category(request.getCategory().getName());
+                    return categoryRepository.save(newCategory);
+                    //Getting error in above two lines ??
+                    //It is because the method findByName was supposed to return category
+                    //but it is now showing return type Object
+                    //Change that to category and also make sure you have a constructor with
+                    //declaration public Category(String category)
+                        }
+
+                );
+
+        request.setCategory(category);
+        return productRepository.save(createProduct(request,category));
+
     }
 
     //we need a helper method to aid in the process of adding a product
