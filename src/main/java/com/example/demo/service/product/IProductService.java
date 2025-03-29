@@ -1,12 +1,13 @@
 package com.example.demo.service.product;
 
 import com.example.demo.model.Product;
+import com.example.demo.request.AddProductRequest;
 
 import java.util.List;
 
 public interface IProductService {
 
-    Product addProduct(Product product);//for adding product to DB
+    Product addProduct(AddProductRequest request);//for adding product to DB
     List<Product> getAllProducts();
     Product getProductById(Long id);
     void deleteProductById(Long id);
