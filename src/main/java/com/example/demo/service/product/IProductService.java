@@ -2,6 +2,7 @@ package com.example.demo.service.product;
 
 import com.example.demo.model.Product;
 import com.example.demo.request.AddProductRequest;
+import com.example.demo.request.ProductUpdateRequest;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface IProductService {
     List<Product> getAllProducts();
     Product getProductById(Long id);
     void deleteProductById(Long id);
-    void updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest request, Long productId);
     List<Product> getProductByCategory(String category);
     List<Product> getProductsByBrand(String brand);
     List<Product> getProductsByCategoryAndBrand(String category, String brand);
