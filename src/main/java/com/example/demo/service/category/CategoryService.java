@@ -31,6 +31,8 @@ public class CategoryService implements ICategoryService {
         return categoryRepository.findAll();
     }
 
+
+
     @Override
     public Category addCategory(Category category) {
         return Optional.of(category).filter(c -> !categoryRepository.existsByName(c.getName()))

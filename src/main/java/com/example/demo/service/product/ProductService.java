@@ -19,6 +19,8 @@ import java.util.Optional;
 public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;//ProductRepository being used as a dependency
+    //will get highlighted in pink when used as a dependency
+    //otherwise even when you use asa an object, not highlighted
     private final CategoryRepository categoryRepository;
     //but if you hover below the above dependency you will see that
     //the productRepo dependency never got assigned.
@@ -72,7 +74,7 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElse(()-> new ProductNotFoundException("Product Not Found"));
+                .orElseThrow(()-> new ProductNotFoundException("Product Not Found"));
     }
 
     @Override
