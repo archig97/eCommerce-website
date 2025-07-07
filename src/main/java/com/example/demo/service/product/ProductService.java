@@ -1,6 +1,7 @@
 package com.example.demo.service.product;
 
 import com.example.demo.exceptions.ProductNotFoundException;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Category;
 import com.example.demo.model.Product;
 import com.example.demo.repository.CategoryRepository;
@@ -74,13 +75,13 @@ public class ProductService implements IProductService {
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product Not Found"));
+                .orElseThrow(()-> new ResourceNotFoundException("Product Not Found"));
     }
 
     @Override
     public void deleteProductById(Long id) {
         productRepository.findById(id).ifPresentOrElse(productRepository::delete,
-                () -> {throw new ProductNotFoundException("Product Not Found");});
+                () -> {throw new ResourceNotFoundException("Product Not Found");});
     }
 
     @Override
@@ -91,7 +92,7 @@ public class ProductService implements IProductService {
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct,request))
                 .map(productRepository :: save)
-                .orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
     }
 
     //helper function for updating product
