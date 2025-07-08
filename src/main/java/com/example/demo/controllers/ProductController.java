@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.List;
 
+import com.example.demo.dto.ProductDTO;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Product;
 import com.example.demo.request.AddProductRequest;
@@ -28,7 +29,7 @@ public class ProductController {
         return ResponseEntity.ok(new APIResponse("Success",products));
     }
 
-    @GetMapping("product/{productId}/product")
+    @GetMapping("product/{productId}")
     public ResponseEntity<APIResponse> getProductById(@PathVariable  Long productId) {
         try{
             Product product = productService.getProductById(productId);
@@ -101,6 +102,22 @@ public class ProductController {
 
     }
 
+    @GetMapping("/products/count/by-brand/by-name")
+    public ResponseEntity<APIResponse> countProductsByBrandAndName(@RequestParam String brandName, @RequestParam String productName) {
+            try {
+                Long count = productService.countProductsByBrandAndName(brandName, productName);
+                if (count==0) {
+                    return ResponseEntity.status(NOT_FOUND).body(new APIResponse("No product found", null));
+                }
+
+                return ResponseEntity.ok(new APIResponse("Found products", count));
+            } catch (Exception e) {
+                return ResponseEntity.ok(new APIResponse(e.getMessage(),null));
+            }
+
+
+    }
+
     @GetMapping("/products/by/category-and-brand")
     public ResponseEntity<APIResponse> getProductByCategoryAndBrand(@RequestParam String categoryName, @RequestParam String brandName) {
             try {
@@ -133,7 +150,7 @@ public class ProductController {
 
     }
 
-     @GetMapping("/products/{category}/all/products")
+     @GetMapping("/products/{categoryName}/all/products")
     public ResponseEntity<APIResponse> findProductsByCategory(@PathVariable String categoryName) {
             try {
                 List<Product> products = productService.getProductByCategory(categoryName);
@@ -142,12 +159,14 @@ public class ProductController {
                 }
 
                 return ResponseEntity.ok(new APIResponse("Found products", products));
-            } catch (ResourceNotFoundException e) {
+            } catch (Exception e) {
                 return ResponseEntity.ok(new APIResponse(e.getMessage(),null));
             }
 
 
     }
+
+
 
 
 

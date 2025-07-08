@@ -9,6 +9,7 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.request.AddProductRequest;
 import com.example.demo.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class ProductService implements IProductService {
     //the productRepo dependency never got assigned.
     //this means that the dependency never got injected.
     //to get it injected, we must make it final so that
+    private final ModelMapper modelMapper;
     //@RequiredArgsConstructor will pick it up.
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -56,10 +58,10 @@ public class ProductService implements IProductService {
     private Product createProduct(AddProductRequest request, Category category){
         return new Product(
                 request.getName(),
-                request.getBrand(),
+                request.getDescription(),
                 request.getPrice(),
                 request.getQuantity(),
-                request.getDescription(),
+                request.getBrand(),
                 category);
     } //getting an error under the whole return statement because cannot find
     //an appropriate constructor for these fields.
@@ -98,10 +100,12 @@ public class ProductService implements IProductService {
     //helper function for updating product
     private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
         existingProduct.setName(request.getName());
-        existingProduct.setBrand(request.getBrand());
+        existingProduct.setDescription(request.getDescription());
+
         existingProduct.setPrice(request.getPrice());
         existingProduct.setQuantity(request.getQuantity());
-        existingProduct.setDescription(request.getDescription());
+        existingProduct.setBrand(request.getBrand());
+
 
         Category category = categoryRepository.findByName(request.getCategory().getName());
         existingProduct.setCategory(category);

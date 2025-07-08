@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,5 +41,6 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade= CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Image> images;
 }

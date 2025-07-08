@@ -50,19 +50,18 @@ public class ImageService implements IImageService {
                 image.setProduct(product);
 
                 String buildDownloadUrl = "/api/v1/images/image/download";
-                String downloadUrl = buildDownloadUrl+image.getId();
+                String downloadUrl = buildDownloadUrl+"/"+image.getId();
                 image.setDownloadUrl(downloadUrl);
                 //this will be the format of the controllers we will create
                 Image savedImage = imageRepository.save(image);
 
-                savedImage.setDownloadUrl(buildDownloadUrl+savedImage.getId());
+                savedImage.setDownloadUrl(buildDownloadUrl+"/"+savedImage.getId());
                 imageRepository.save(savedImage);
                 ImageDTO imageDto = new ImageDTO();
                 imageDto.setImageId(savedImage.getId());
                 imageDto.setImageName(savedImage.getFileName());
                 imageDto.setDownloadUrl(savedImage.getDownloadUrl());
                 savedImageDto.add(imageDto);
-
             }
             catch(IOException | SQLException e){
                 throw new RuntimeException(e.getMessage());
