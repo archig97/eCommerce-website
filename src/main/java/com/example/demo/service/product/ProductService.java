@@ -1,10 +1,13 @@
 package com.example.demo.service.product;
 
-import com.example.demo.exceptions.ProductNotFoundException;
+import com.example.demo.dto.ImageDTO;
+import com.example.demo.dto.ProductDTO;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Category;
+import com.example.demo.model.Image;
 import com.example.demo.model.Product;
 import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.ImageRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.request.AddProductRequest;
 import com.example.demo.request.ProductUpdateRequest;
@@ -29,6 +32,8 @@ public class ProductService implements IProductService {
     //this means that the dependency never got injected.
     //to get it injected, we must make it final so that
     private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
+
     //@RequiredArgsConstructor will pick it up.
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -142,5 +147,23 @@ public class ProductService implements IProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String productName) {
         return productRepository.countByBrandAndName(brand,productName);
+    }
+
+    @Override
+    public List<ProductDTO> getConvertedProducts(List<Product> products){
+        return products.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public ProductDTO convertToDto(Product product){
+        ProductDTO productDto = modelMapper.map(product, ProductDTO.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        //we just want to return name and download url of image to the user
+        List<ImageDTO> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDTO.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
+
     }
 }
