@@ -1,5 +1,8 @@
 package com.example.demo.service.cart;
 
+import java.math.BigDecimal;
+
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Cart;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Product;
@@ -51,11 +54,45 @@ public class CartItemService implements ICartItemService {
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
+        Cart cart=cartService.getCart(cartId);
+        CartItem itemToRemove = cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
 
+        cart.removeItem(itemToRemove);
+        cartRepository.save(cart);
     }
 
     @Override
     public void updateItemQuantity(Long cartId, Long productId, int quantity) {
+        Cart cart=cartService.getCart(cartId);
+        Product product=productService.getProductById(productId);
+        cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .ifPresent(item -> {
+                    item.setQuantity(quantity);
+                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setTotalPrice();
+                });
+
+        BigDecimal totalAmount = cart.getTotalAmount();
+        cart.setTotalAmount(totalAmount);
+
+
+        cartRepository.save(cart);
+    }
+
+    //not exactly required but thia code is used multiple times so better just keep calling the function
+    @Override
+    public CartItem getCartItem(Long cartId, Long productId){
+        Cart cart=cartService.getCart(cartId);
+        return cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst().orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
 
     }
 }
