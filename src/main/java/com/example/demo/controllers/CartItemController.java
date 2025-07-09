@@ -28,4 +28,26 @@ public class CartItemController {
         }
 
     }
+
+    @DeleteMapping("/{cartId}/item/{itemId}/remove")
+    public ResponseEntity<APIResponse> removeItemsFromCart(@PathVariable Long cartId, @PathVariable Long itemId){
+        try{
+            cartItemService.removeItemFromCart(cartId, itemId);
+        return ResponseEntity.ok(new APIResponse("Item removed successfully",null));
+        } catch(ResourceNotFoundException e){
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(),null));
+        }
+    }
+
+    @PutMapping("/cart/{cartId}/item/{itemId}/update")
+    public ResponseEntity<APIResponse> updateItemQuantity(@PathVariable Long cartId,
+                                                          @PathVariable Long itemId,
+                                                          @RequestParam Integer quantity){
+        try{
+            cartItemService.updateItemQuantity(cartId, itemId, quantity);
+            return ResponseEntity.ok(new APIResponse("Item updated successfully",null));
+        } catch(ResourceNotFoundException e){
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse(e.getMessage(),null));
+        }
+    }
 }
