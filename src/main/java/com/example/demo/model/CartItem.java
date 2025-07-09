@@ -3,7 +3,16 @@ package com.example.demo.model;
 import java.math.BigDecimal;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItem {
 
     @Id
@@ -24,4 +33,6 @@ public class CartItem {
     public void setTotalPrice(){
         this.totalPrice = this.unitPrice.multiply(new BigDecimal(this.quantity));
     }
+
+
 }
