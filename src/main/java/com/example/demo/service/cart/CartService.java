@@ -1,6 +1,7 @@
 package com.example.demo.service.cart;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Cart;
@@ -16,6 +17,7 @@ public class CartService implements ICartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final AtomicLong cartIdGenerator = new AtomicLong(0);
     @Override
     public Cart getCart(Long id) {
         Cart cart = cartRepository.findById(id)
@@ -40,6 +42,15 @@ public class CartService implements ICartService {
         return cart.getCartItems().stream().map(
                 CartItem:: getTotalPrice)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+    }
+
+    @Override
+    public Long initializeNewCart(){
+        Cart newCart = new Cart();
+        Cart savedCart = cartRepository.save(newCart);
+        return savedCart.getId();
+
 
     }
 }

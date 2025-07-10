@@ -1,5 +1,6 @@
 package com.example.demo.request;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.example.demo.model.Category;
@@ -13,7 +14,7 @@ public class AddProductRequest {
     private Long id;
     private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private int quantity;
     private String brand;
     private Category category;

@@ -61,7 +61,12 @@ public class CartItemService implements ICartItemService {
                 .findFirst().orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
 
         cart.removeItem(itemToRemove);
-        cartRepository.save(cart);
+        if (cart.getCartItems().isEmpty()) {
+        cartRepository.delete(cart); // 🧹 delete the cart if no items left
+    } else {
+        cartRepository.save(cart); // save updated cart with fewer items
+    }
+
     }
 
     @Override
@@ -78,7 +83,10 @@ public class CartItemService implements ICartItemService {
                     item.setTotalPrice();
                 });
 
-        BigDecimal totalAmount = cart.getTotalAmount();
+        BigDecimal totalAmount = cart.getCartItems().stream()
+                        .map(CartItem :: getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         cart.setTotalAmount(totalAmount);
 
 

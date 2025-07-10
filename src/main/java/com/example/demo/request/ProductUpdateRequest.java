@@ -1,5 +1,7 @@
 package com.example.demo.request;
 
+import java.math.BigDecimal;
+
 import com.example.demo.model.Category;
 import lombok.Data;
 
@@ -9,7 +11,7 @@ public class ProductUpdateRequest {
     private Long id;
     private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private int quantity;
     private String brand;
     private Category category;
