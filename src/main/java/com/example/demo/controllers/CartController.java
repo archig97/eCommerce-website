@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final ICartService cartService;
 
-    @GetMapping("{cartId}/my-cart")
+    @GetMapping("/{cartId}/my-cart")
     public ResponseEntity<APIResponse> getCart(@PathVariable Long cartId){
         try{
             Cart cart = cartService.getCart(cartId);
