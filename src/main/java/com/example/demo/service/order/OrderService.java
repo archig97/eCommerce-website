@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+import com.example.demo.dto.OrderDTO;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Cart;
@@ -14,7 +15,10 @@ import com.example.demo.model.OrderItem;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.cart.CartService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +28,9 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+    private final ModelMapper modelMapper;
 
+    @Transactional
     @Override
     public Order placeOrder(Long userId) {
 
@@ -74,14 +80,21 @@ public class OrderService implements IOrderService {
     //ORDER SERVICE IS COMPLICATED SO WILL REQUIRE A FEW HELPER METHODS
 
     @Override
-    public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId)
+    public OrderDTO getOrder(Long orderId) {
+        return orderRepository.findById(orderId).map(this :: convertToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     //get list of orders for a user
     @Override
-    public List<Order> getUserOrders(Long userId){
-        return orderRepository.findByUserId(userId);
+    public List<OrderDTO> getUserOrders(Long userId){
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream()
+                .map(this :: convertToDto).toList();
+    }
+
+    private OrderDTO convertToDto(Order order){
+        return modelMapper.map(order, OrderDTO.class);
+
     }
 }
