@@ -27,13 +27,13 @@ public class UserController {
     private final IUserService userService;
 
     @GetMapping("/{userId}/user")
-    public ResponseEntity<APIResponse> getUserById(@PathVariable Long id){
+    public ResponseEntity<APIResponse> getUserById(@PathVariable Long userId){
         try{
-            User user = userService.getUserById(id);
+            User user = userService.getUserById(userId);
             UserDTO userDto = userService.convertToDto(user);
         return ResponseEntity.ok(new APIResponse("Found user!", userDto));
         }catch(ResourceNotFoundException e){
-            return ResponseEntity.status(NOT_FOUND).body(new APIResponse("User with id " + id + " not found", null));
+            return ResponseEntity.status(NOT_FOUND).body(new APIResponse("User with id " + userId + " not found", null));
         }
     }
 

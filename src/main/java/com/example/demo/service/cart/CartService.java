@@ -1,11 +1,13 @@
 package com.example.demo.service.cart;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Cart;
 import com.example.demo.model.CartItem;
+import com.example.demo.model.User;
 import com.example.demo.repository.CartItemRepository;
 import com.example.demo.repository.CartRepository;
 import jakarta.transaction.Transactional;
@@ -48,11 +50,14 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public Long initializeNewCart(){
-        Cart newCart = new Cart();
-        Cart savedCart = cartRepository.save(newCart);
-        return savedCart.getId();
-
+    public Cart initializeNewCart(User user){
+        //using Optional in case Cart does not exist
+        return Optional.ofNullable(getCartByUserId(user.getId()))
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUser(user);
+                    return cartRepository.save(cart);
+                });
 
     }
 
