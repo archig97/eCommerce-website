@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.exceptions.AlreadyExistsException;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.User;
@@ -29,7 +30,8 @@ public class UserController {
     public ResponseEntity<APIResponse> getUserById(@PathVariable Long id){
         try{
             User user = userService.getUserById(id);
-        return ResponseEntity.ok(new APIResponse("Found user!", user));
+            UserDTO userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new APIResponse("Found user!", userDto));
         }catch(ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse("User with id " + id + " not found", null));
         }
@@ -39,7 +41,8 @@ public class UserController {
     public ResponseEntity<APIResponse> createUser(@RequestBody CreateUserRequest request){
         try{
             User user =userService.createUser(request);
-        return ResponseEntity.ok(new APIResponse("Created user!", user));
+            UserDTO userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new APIResponse("Created user!", userDto));
         }catch(AlreadyExistsException e){
             return ResponseEntity.status(CONFLICT).body(new APIResponse("User already exists in DB!",null));
 
@@ -50,7 +53,8 @@ public class UserController {
     public ResponseEntity<APIResponse> updateUser(@PathVariable Long userId, @RequestBody UpdateUserRequest request){
         try{
             User user = userService.updateUser(request,userId);
-            return ResponseEntity.ok(new APIResponse("Updated user!", user));
+            UserDTO userDto = userService.convertToDto(user);
+            return ResponseEntity.ok(new APIResponse("Updated user!", userDto));
         } catch(ResourceNotFoundException e){
             return ResponseEntity.status(NOT_FOUND).body(new APIResponse("User with id " + userId + " not found", null));
         }

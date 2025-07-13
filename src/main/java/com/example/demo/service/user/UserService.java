@@ -2,6 +2,7 @@ package com.example.demo.service.user;
 
 import java.util.Optional;
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.exceptions.AlreadyExistsException;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.User;
@@ -9,6 +10,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.request.CreateUserRequest;
 import com.example.demo.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -58,5 +61,10 @@ public class UserService implements IUserService {
                 .ifPresentOrElse(userRepository::delete, () -> {
                     throw new ResourceNotFoundException("User not Found");
                 });
+    }
+
+    @Override
+    public UserDTO convertToDto(User user){
+        return modelMapper.map(user, UserDTO.class);
     }
 }
